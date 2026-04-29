@@ -6,6 +6,30 @@ NUM_SNAKE_BABIES = 10   # Per pair
 NEW_SNAKES_PER_ROUND = 4 
 NUM_ROUNDS = 5
 
+import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
+from datetime import datetime
+
+def submit_score(team, score):
+    scope = ["https://www.googleapis.com/auth/spreadsheets"]
+
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=scope
+    )
+
+    client = gspread.authorize(creds)
+
+    sheet = client.open("Snake Game Scores").sheet1
+
+    sheet.append_row([
+        team,
+        score,
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ])
+
+
 st.title("Snakes at the Biltmore!")
 
 # Initialize Variables (Only done at start of game)
@@ -64,6 +88,12 @@ if st.button('Decide'):
 if st.session_state.round > NUM_ROUNDS: 
     st.success(f'Final Score: {st.session_state.money}') 
 
+    team = st.text_input("Team Name")
+
+    if st.button("📤 Submit Score"):
+        submit_score(team, st.session_state.money)
+        st.success("Score submitted!")
+
 
 # --- Chart --- 
 if st.session_state.history: 
@@ -77,3 +107,5 @@ if st.session_state.history:
 if st.button('Restart'): 
     st.session_state.clear() 
     st.rerun()
+
+
