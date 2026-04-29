@@ -40,6 +40,7 @@ if "snakes" not in st.session_state:
     st.session_state.money = 0 
     st.session_state.round = 1 
     st.session_state.history = []
+    st.session_state.submitted = False
 
     
 
@@ -93,8 +94,12 @@ if st.session_state.round > NUM_ROUNDS:
     team = st.text_input("Team Name")
 
     if st.button("📤 Submit Score"):
-        submit_score(team, st.session_state.money)
-        st.success("Score submitted!")
+        if not st.session_state.submitted:
+            submit_score(team, st.session_state.money)
+            st.session_state.submitted = True
+            st.success("Score submitted!")
+        else:
+            st.info("You already submitted your score.")
 
 
 # --- Chart --- 
