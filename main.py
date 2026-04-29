@@ -19,9 +19,11 @@ def submit_score(team, score):
         scopes=scope
     )
 
+
     client = gspread.authorize(creds)
 
-    sheet = client.open("Snake Game Scores").sheet1
+    sheet = client.open_by_key("1lLNjuurhJtrafjrAT95_85JFBMu-UVHBNvbOtsnjcmk").sheet1
+    # sheet = client.open("Snake Game Scores").sheet1
 
     sheet.append_row([
         team,
@@ -35,7 +37,7 @@ st.title("Snakes at the Biltmore!")
 # Initialize Variables (Only done at start of game)
 if "snakes" not in st.session_state:
     st.session_state.snakes = 5 
-    st.session_state.money = 100 
+    st.session_state.money = 0 
     st.session_state.round = 1 
     st.session_state.history = []
 
@@ -56,7 +58,7 @@ num_to_sell = st.slider(
 st.write(f'Keeping {st.session_state.snakes - num_to_sell} snakes to breed')
 
 # --- Resolve --- 
-if st.button('Decide'): 
+if st.button('Decide') and st.session_state.round <= NUM_ROUNDS: 
     snakes = st.session_state.snakes 
     money = st.session_state.money 
 
