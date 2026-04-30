@@ -1,4 +1,8 @@
 import streamlit as st 
+import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
+from datetime import datetime
 
 # Game Parameters 
 SNAKE_SELL_PRICE = 10
@@ -6,12 +10,9 @@ NUM_SNAKE_BABIES = 10   # Per pair
 NEW_SNAKES_PER_ROUND = 4 
 NUM_ROUNDS = 5
 
-import streamlit as st
-import gspread
-from google.oauth2.service_account import Credentials
-from datetime import datetime
 
-def submit_score(team, score):
+# Submits results to Google Sheets
+def submit_results(team, cash, snakes):
     scope = ["https://www.googleapis.com/auth/spreadsheets"]
 
     creds = Credentials.from_service_account_info(
@@ -19,15 +20,15 @@ def submit_score(team, score):
         scopes=scope
     )
 
-
     client = gspread.authorize(creds)
 
     sheet = client.open_by_key("1lLNjuurhJtrafjrAT95_85JFBMu-UVHBNvbOtsnjcmk").sheet1
-    # sheet = client.open("Snake Game Scores").sheet1
 
+    # Team Name  |  Final Cash  |  Final Snake Count  |  Timestamp
     sheet.append_row([
-        team,
-        score,
+        team, 
+        cash,
+        snakes,
         datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ])
 
@@ -42,7 +43,6 @@ if "snakes" not in st.session_state:
     st.session_state.history = []
     st.session_state.submitted = False
 
-    
 
 # --- Display --- 
 st.header(f'Round {st.session_state.round}')
@@ -56,10 +56,11 @@ num_to_sell = st.slider(
     max_value = st.session_state.snakes, 
     value = 0
 )
+
 st.write(f'Keeping {st.session_state.snakes - num_to_sell} snakes to breed')
 
 # --- Resolve --- 
-if st.button('Decide') and st.session_state.round <= NUM_ROUNDS: 
+if st.session_state.round <= NUM_ROUNDS and st.button('Decide'): 
     snakes = st.session_state.snakes 
     money = st.session_state.money 
 
@@ -70,7 +71,6 @@ if st.button('Decide') and st.session_state.round <= NUM_ROUNDS:
     # Breed snakes 
     snakes += NUM_SNAKE_BABIES * (snakes // 2)  # 10 new snakes for every pair, rounding DOWN because they dont reproduce asexually
     snakes += NEW_SNAKES_PER_ROUND   # Get 4 new snakes each round
-
 
     # Save history 
     st.session_state.history.append( {
@@ -95,11 +95,11 @@ if st.session_state.round > NUM_ROUNDS:
 
     if st.button("📤 Submit Score"):
         if not st.session_state.submitted:
-            submit_score(team, st.session_state.money)
+            submit_results(team, st.session_state.money)
             st.session_state.submitted = True
             st.success("Score submitted!")
         else:
-            st.info("You already submitted your score.")
+            st.info("You already submitted your score!")
 
 
 # --- Chart --- 
