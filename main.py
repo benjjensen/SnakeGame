@@ -45,7 +45,7 @@ if "snakes" not in st.session_state:
 
 
 # --- Display --- 
-st.header(f'Round {st.session_state.round}')
+st.header(f'Round {st.session_state.round}' if st.session_state.round <= NUM_ROUNDS else f'GAME OVER!')
 st.metric('  Snakes: ', st.session_state.snakes) 
 st.metric('  Money: ', st.session_state.money) 
 
