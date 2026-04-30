@@ -95,7 +95,7 @@ if st.session_state.round > NUM_ROUNDS:
 
     if st.button("📤 Submit Score"):
         if not st.session_state.submitted:
-            submit_results(team, st.session_state.money)
+            submit_results(team, st.session_state.money, st.session_state.snakes)
             st.session_state.submitted = True
             st.success("Score submitted!")
         else:
