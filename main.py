@@ -7,7 +7,7 @@ from datetime import datetime
 # Game Parameters 
 SNAKE_SELL_PRICE = 10
 NUM_SNAKE_BABIES = 10   # Per pair
-NEW_SNAKES_PER_ROUND = 4 
+NEW_SNAKES_PER_ROUND = 5
 NUM_ROUNDS = 5
 
 
