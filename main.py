@@ -112,9 +112,9 @@ if st.session_state.history:
     })
 
 
-# --- Reset --- 
-if st.button('Restart'): 
-    st.session_state.clear() 
-    st.rerun()
+# # --- Reset --- 
+# if st.button('Restart'): 
+#     st.session_state.clear() 
+#     st.rerun()
 
 
